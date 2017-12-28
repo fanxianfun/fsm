@@ -6,6 +6,12 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.Scanner;
 
+/**
+ * 从输入的二进制数中判断这个数是否为偶数的程序，如果是偶数就变更状态，如果不是偶数不改变状态。
+ *
+ *  s1 s2
+ *  是偶数 不是偶数
+ */
 public class Binary {
 
     private static final Logger logger = LoggerFactory.getLogger(Binary.class);
@@ -53,11 +59,10 @@ public class Binary {
             if(line.length() == 0){
                 continue;
             }
-            String[] words = line.split("");
-            for (String word : words) {
-                binary.fire(word);
-                logger.debug("current state ==>> {} ",binary.getCurrentState());
-            }
+
+            String event = line.substring(line.length() - 1, line.length());
+            binary.fire(event);
+            logger.debug("current state ==>> {} ",binary.getCurrentState());
 
         }
 

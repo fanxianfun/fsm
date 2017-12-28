@@ -12,38 +12,50 @@ import java.util.Scanner;
 
 
 /**
- * 从输入的二进制数中判断这个数是否为偶数的程序，如果是偶数就变更状态，如果不是偶数不改变状态。
+ * 判断一个二进制串是否能被 3 整除。
  */
-public class BinaryStateMachine {
-
-    private static final Logger logger = LoggerFactory.getLogger(BinaryStateMachine.class);
+public class BinaryStateMachine2 {
 
     @States({
-            @State(name="S1"),
-            @State(name="S2")
+            @State(name="0"),
+            @State(name="1"),
+            @State(name="2")
     })
     @Transitions({
-            @Transit(from="S1", to="S2", on="0", callMethod="fromS1ToS2"),
-            @Transit(from="S2", to="S1", on="0", callMethod="fromS2ToS1"),
+            @Transit(from="0", to="1", on="1", callMethod="from0To1"),
+            @Transit(from="1", to="0", on="1", callMethod="from1To0"),
+            @Transit(from="1", to="2", on="0", callMethod="from1To2"),
+            @Transit(from="2", to="1", on="0", callMethod="from2To1"),
     })
     @StateMachineParameters(stateType=String.class, eventType=String.class, contextType=Integer.class)
     static class StateMachineSample extends AbstractUntypedStateMachine {
 
-        protected void fromS1ToS2(String from, String to, String event, Integer context) {
+        protected void from0To1(String from, String to, String event, Integer context) {
             logger.info("from [{}] to [{}] on [{}]",from,to,event);
         }
 
-        protected void fromS2ToS1(String from, String to, String event, Integer context) {
+        protected void from1To0(String from, String to, String event, Integer context) {
+            logger.info("from [{}] to [{}] on [{}]",from,to,event);
+            logger.warn("能整除");
+        }
+
+        protected void from1To2(String from, String to, String event, Integer context) {
+            logger.info("from [{}] to [{}] on [{}]",from,to,event);
+        }
+
+        protected void from2To1(String from, String to, String event, Integer context) {
             logger.info("from [{}] to [{}] on [{}]",from,to,event);
         }
 
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(BinaryStateMachine2.class);
+
     public static void main(String[] args) {
 
         UntypedStateMachineBuilder builder = StateMachineBuilderFactory.create(StateMachineSample.class);
 
-        UntypedStateMachine fsm = builder.newStateMachine("S1");
+        UntypedStateMachine fsm = builder.newStateMachine("0");
 
         fsm.addTransitionCompleteListener(event -> logger.debug("current state ==>> {} ",event.getStateMachine().getCurrentState()));
 
@@ -55,9 +67,12 @@ public class BinaryStateMachine {
             if(line.length() == 0){
                 continue;
             }
-            String event = line.substring(line.length() - 1, line.length());
-            fsm.fire(event);
+            break;
+        }
 
+        assert line != null;
+        for (String word : line.split("")) {
+            fsm.fire(word);
         }
     }
 }
