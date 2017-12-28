@@ -1,9 +1,14 @@
 package com.heetian.example1;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Objects;
 import java.util.Scanner;
 
 public class Binary {
+
+    private static final Logger logger = LoggerFactory.getLogger(Binary.class);
 
     private Binary(String currentState) {
         this.currentState = currentState;
@@ -11,24 +16,22 @@ public class Binary {
 
     private String currentState;
 
-    private void transition(String event) {
+    private void fire(String event) {
 
         switch (event) {
             case "1":
-                // from [S2] on [0] to [S2]
-                // from [S1] on [0] to [S1]
                 break;
             case "0":
                 if(Objects.equals(this.currentState,"S2")){
-                    // from [S2] on [1] to [S1]
                     this.currentState = "S1";
+                    logger.info("from [{}] to [{}] on [{}]","S2","S1","0");
                 }else {
-                    // from [S1] on [1] to [S2]
                     this.currentState = "S2";
+                    logger.info("from [{}] to [{}] on [{}]","S1","S2","0");
                 }
                 break;
             default:
-                System.out.println("Invalid input.");
+                logger.error("Invalid input.");
                 break;
         }
     }
@@ -42,6 +45,7 @@ public class Binary {
 
         Binary binary = new Binary("S1");
 
+        logger.info("Application is heartbeat! init state ==>> {}",binary.getCurrentState());
         String line;
         Scanner sc = new Scanner(System.in);
 
@@ -51,8 +55,8 @@ public class Binary {
             }
             String[] words = line.split("");
             for (String word : words) {
-                binary.transition(word);
-                System.out.println(binary.getCurrentState());
+                binary.fire(word);
+                logger.debug("current state ==>> {} ",binary.getCurrentState());
             }
 
         }
